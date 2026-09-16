@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>SMS Forward 配置</title>
+  <style>
+    :root { color-scheme: dark; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #070b14; color: #e8eefc; line-height: 1.45;
+    }
+    header {
+      padding: 20px 16px 8px; position: sticky; top: 0;
+      background: linear-gradient(#070b14f2, #070b14cc); backdrop-filter: blur(8px);
+      border-bottom: 1px solid #1f2937;
+    }
+    h1 { font-size: 1.15rem; margin: 0 0 4px; font-weight: 650; }
+    .sub { color: #94a3b8; font-size: .82rem; }
+    main { padding: 12px 16px 40px; max-width: 560px; margin: 0 auto; }
+    section {
+      background: #0f172a; border: 1px solid #1e293b; border-radius: 14px;
+      padding: 14px; margin: 12px 0;
+    }
+    section h2 { margin: 0 0 10px; font-size: .95rem; color: #7dd3fc; font-weight: 600; }
+    label { display: block; font-size: .78rem; color: #94a3b8; margin: 10px 0 4px; }
+    input, select {
+      width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid #334155;
+      background: #020617; color: #e2e8f0; font-size: 15px;
+    }
+    input:focus, select:focus { outline: 2px solid #0ea5e9; border-color: transparent; }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+    button, .btn {
+      appearance: none; border: 0; border-radius: 999px; padding: 11px 16px;
+      font-size: .92rem; font-weight: 600; cursor: pointer; text-decoration: none;
+      display: inline-flex; align-items: center; justify-content: center;
+    }
+    .primary { background: #0ea5e9; color: #04111a; }
+    .ghost { background: #1e293b; color: #e2e8f0; }
+    .danger { background: #7f1d1d; color: #fecaca; }
+    .hint { font-size: .75rem; color: #64748b; margin-top: 6px; }
+    #status { min-height: 1.2em; color: #86efac; font-size: .85rem; margin-top: 8px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>SMS Forward</h1>
+    <div class="sub">配置 Bark / SMTP · 自定义卡名称</div>
+  </header>
+  <main>
+    <form id="cfg" method="POST" action="/cgi-bin/save.sh">
+      <section>
+        <h2>基本</h2>
+        <label>卡名称 DEVICE_NAME</label>
+        <input name="DEVICE_NAME" id="DEVICE_NAME" placeholder="Card1" />
+        <label>本机 SIM 号 SIM_NUMBER</label>
+        <input name="SIM_NUMBER" id="SIM_NUMBER" placeholder="+1XXXXXXXXXX" />
+        <label>轮询间隔（秒）</label>
+        <input name="POLL_INTERVAL" id="POLL_INTERVAL" inputmode="numeric" />
+      </section>
+
+      <section>
+        <h2>Bark</h2>
+        <label>BARK_KEY</label>
+        <input name="BARK_KEY" id="BARK_KEY" placeholder="YOUR_BARK_KEY" autocomplete="off" />
+        <label>BARK_SERVER</label>
+        <input name="BARK_SERVER" id="BARK_SERVER" placeholder="https://api.day.app" />
+        <div class="row">
+          <div>
+            <label>声音</label>
+            <input name="BARK_SOUND" id="BARK_SOUND" />
+          </div>
+          <div>
+            <label>图标 URL</label>
+            <input name="BARK_ICON" id="BARK_ICON" />
+          </div>
+        </div>
+        <p class="hint">标题形如：卡名称 · 发信号码</p>
+      </section>
+
+      <section>
+        <h2>SMTP 邮件</h2>
+        <label>SMTP_HOST</label>
+        <input name="SMTP_HOST" id="SMTP_HOST" placeholder="smtp.mail.me.com" />
+        <div class="row">
+          <div>
+            <label>端口</label>
+            <input name="SMTP_PORT" id="SMTP_PORT" inputmode="numeric" />
+          </div>
+          <div>
+            <label>加密</label>
+            <select name="SMTP_ENCRYPTION" id="SMTP_ENCRYPTION">
+              <option value="starttls">STARTTLS</option>
+              <option value="ssl">SSL/SMTPS</option>
+              <option value="none">无</option>
+            </select>
+          </div>
+        </div>
+        <label>账号 SMTP_USER</label>
+        <input name="SMTP_USER" id="SMTP_USER" placeholder="you@example.com" autocomplete="username" />
+        <label>密码 SMTP_PASS</label>
+        <input name="SMTP_PASS" id="SMTP_PASS" type="password" placeholder="应用专用密码" autocomplete="current-password" />
+        <label>发件人 MAIL_FROM</label>
+        <input name="MAIL_FROM" id="MAIL_FROM" placeholder="you@example.com" />
+        <label>收件人 MAIL_TO</label>
+        <input name="MAIL_TO" id="MAIL_TO" placeholder="receiver@example.com" />
+        <p class="hint">iCloud：smtp.mail.me.com:587 + STARTTLS + App 专用密码</p>
+      </section>
+
+      <section>
+        <h2>可选</h2>
+        <label>Telegram Bot Token</label>
+        <input name="TELEGRAM_BOT_TOKEN" id="TELEGRAM_BOT_TOKEN" />
+        <label>Telegram Chat ID</label>
+        <input name="TELEGRAM_CHAT_ID" id="TELEGRAM_CHAT_ID" />
+        <label>Webhook URL</label>
+        <input name="WEBHOOK_URL" id="WEBHOOK_URL" />
+      </section>
+
+      <div class="actions">
+        <button class="primary" type="submit">保存</button>
+        <a class="btn ghost" href="/cgi-bin/test.sh">发送测试</a>
+        <a class="btn ghost" href="/cgi-bin/log.sh">查看日志</a>
+      </div>
+      <div id="status"></div>
+    </form>
+  </main>
+  <script>
+    fetch('/cgi-bin/get.sh').then(r => r.json()).then(d => {
+      Object.keys(d).forEach(k => {
+        const el = document.getElementById(k);
+        if (el) el.value = d[k] || '';
+      });
+    }).catch(() => {
+      document.getElementById('status').textContent = '读取配置失败（请确认模块已安装）';
+    });
+  </script>
+</body>
+</html>
