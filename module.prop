@@ -1,0 +1,6 @@
+id=smsforward
+name=SMS Forward
+version=v1.1.0
+versionCode=110
+author=Maksim-venus
+description=Forward new SMS via Bark and/or SMTP; custom card name (Android 9+, Magisk)
